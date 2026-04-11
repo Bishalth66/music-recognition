@@ -69,7 +69,7 @@ const RecordUi = () => {
   // 📡 SEND TO SERVER
   const sendToServer = async (blob: Blob) => {
     const formData = new FormData();
-    formData.append("file", blob, "audio.webm");
+    formData.append("audio", blob, "audio.webm");
 
     try {
       const res = await fetch("http://localhost:8000/api/recognize/", {
