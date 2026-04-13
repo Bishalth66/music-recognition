@@ -2,8 +2,17 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FiUpload, FiX } from "react-icons/fi";
 type resultServer = {
-    title:string
+    confidence:number,
+    song:{
+      id:number,
+      title:string,
+      artist:string,
+      album:string,
+      duration_seconds:number
+    }
 }
+
+
 
 const UploadUi = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -56,7 +65,6 @@ const UploadUi = () => {
     setPreviewUrl(null);
     setResult(null);
   };
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-64 gap-6">
 
@@ -111,7 +119,7 @@ const UploadUi = () => {
           {/* 🎯 result */}
           {result && (
             <div className="mt-3 text-sm text-green-600">
-              🎉 {result?.title || "Song detected!"}
+              {result?.song.title || "Song not detected!"}
             </div>
           )}
         </div>

@@ -10,11 +10,11 @@ from scipy.ndimage import maximum_filter, generate_binary_structure, iterate_str
 # ── Parameters ───────────────────────────────────────────────────────────────
 SAMPLE_RATE       = 22050
 N_FFT             = 4096
-HOP_LENGTH        = 512
-N_MELS            = 128
+HOP_LENGTH        = 256
+N_MELS            = 96
 PEAK_NEIGHBORHOOD = 20
 MIN_AMPLITUDE_DB  = -60
-FAN_VALUE         = 15
+FAN_VALUE         = 7
 MIN_TIME_DELTA    = 1
 MAX_TIME_DELTA    = 200
 
