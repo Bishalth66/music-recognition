@@ -21,6 +21,7 @@ const RecordUi = () => {
   const [data,setData]=useState<resultServer>();
   // 🎤 START
   const startRecording = async () => {
+    chunksRef.current=[];
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
@@ -93,6 +94,7 @@ const RecordUi = () => {
       );
 
       const data = await res.json();
+      setData(data);
       console.log("Detected:", data);
     } catch (err) {
       console.error(err);
@@ -129,6 +131,7 @@ const RecordUi = () => {
               ? "Listening..."
               : "Tap to identify music"}
         </p>
+        <p>{data?.song.title}</p>
       </div>
     </div>
   );
