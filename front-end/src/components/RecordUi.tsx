@@ -1,16 +1,16 @@
 import { useRef, useState } from "react";
 import { IoMicOutline } from "react-icons/io5";
-
+import Overlay from "./Overlay";
 type resultServer = {
-    confidence:number,
-    song:{
-      id:number,
-      title:string,
-      artist:string,
-      album:string,
-      duration_seconds:number
-    }
-}
+  confidence: number;
+  song: {
+    id: number;
+    title: string;
+    artist: string;
+    album: string;
+    duration_seconds: number;
+  };
+};
 const RecordUi = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -18,10 +18,10 @@ const RecordUi = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [data,setData]=useState<resultServer>();
+  const [data, setData] = useState<resultServer>();
   // 🎤 START
   const startRecording = async () => {
-    chunksRef.current=[];
+    chunksRef.current = [];
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
@@ -109,7 +109,7 @@ const RecordUi = () => {
         {/* 🎤 SINGLE MIC BUTTON */}
         <button
           onClick={toggleRecording}
-          className={`relative text-6xl text-white p-6 rounded-full transition ${isLoading ? "bg-yellow-500 animate-pulse" : isRecording? "bg-red-500 animate-pulse" : "bg-blue-600" }`}
+          className={`relative text-6xl text-white p-6 rounded-full transition ${isLoading ? "bg-yellow-500 animate-pulse" : isRecording ? "bg-red-500 animate-pulse" : "bg-blue-600"}`}
         >
           <IoMicOutline />
 
@@ -131,7 +131,9 @@ const RecordUi = () => {
               ? "Listening..."
               : "Tap to identify music"}
         </p>
-        <p>{data?.song.title}</p>
+        {data?.song?.title && (
+          <Overlay title={data?.song?.title} artist={data?.song.artist} />
+        )}
       </div>
     </div>
   );

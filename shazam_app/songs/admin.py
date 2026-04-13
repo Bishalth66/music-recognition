@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Song, Fingerprint
-
+admin.site.site_url = "http://localhost:3000/"
 
 class FingerprintInline(admin.TabularInline):
     model        = Fingerprint
