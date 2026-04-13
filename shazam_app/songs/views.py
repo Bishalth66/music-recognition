@@ -342,6 +342,7 @@ class RecognizeView(APIView):
                     "artist":           song.artist,
                     "album":            song.album,
                     "duration_seconds": song.duration_seconds,
+                    'lyrics' : song.lyrics
                 },
                 "confidence":     round(confidence, 4),
                 "votes":          best_votes,

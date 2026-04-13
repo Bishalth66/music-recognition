@@ -5,6 +5,7 @@ class Song(models.Model):
     title           = models.CharField(max_length=255)
     artist          = models.CharField(max_length=255, blank=True)
     album           = models.CharField(max_length=255, blank=True)
+    lyrics          =models.TextField(blank=True)
     audio_file      = models.FileField(upload_to='songs/')
     duration_seconds = models.FloatField(null=True, blank=True)
     fingerprinted   = models.BooleanField(default=False)
@@ -23,4 +24,4 @@ class Fingerprint(models.Model):
         indexes = [models.Index(fields=['hash_value'])]
 
     def __str__(self):
-        return f"{self.hash_value} @ {self.offset} → {self.song}"
+        return f"{self.hash_value} @ {self.offset}"

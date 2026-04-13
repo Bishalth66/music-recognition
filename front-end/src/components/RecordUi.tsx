@@ -9,9 +9,11 @@ type resultServer = {
     artist: string;
     album: string;
     duration_seconds: number;
+    lyrics:string;
   };
 };
 const RecordUi = () => {
+  const [openOverlay, setOpenOverlay] = useState<boolean>(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -95,7 +97,8 @@ const RecordUi = () => {
 
       const data = await res.json();
       setData(data);
-      console.log("Detected:", data);
+      setOpenOverlay(true);
+      
     } catch (err) {
       console.error(err);
     } finally {
@@ -131,8 +134,8 @@ const RecordUi = () => {
               ? "Listening..."
               : "Tap to identify music"}
         </p>
-        {data?.song?.title && (
-          <Overlay title={data?.song?.title} artist={data?.song.artist} />
+        {openOverlay && data?.song?.title &&  (
+          <Overlay title={data?.song?.title} artist={data?.song.artist} lyrics={data?.song?.lyrics} onClose={() => setOpenOverlay(false)}/>
         )}
       </div>
     </div>

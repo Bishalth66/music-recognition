@@ -6,26 +6,24 @@ import { useState } from "react";
 import { IoMenu, IoClose } from "react-icons/io5";
 
 const NavBar = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <header className="w-full h-16 flex items-center justify-between px-4 md:px-6 bg-white border-b border-gray-200 relative">
-      
       {/* Logo */}
       <div className="flex gap-1 items-center">
-      <div className="w-15 h-15 relative">
-  <Image
-    src="/wave-logo.png"
-    alt="SoundTrace logo"
-    fill
-    className="object-contain"
-    sizes="52px"
-    priority
-  />
-
-</div>
-<p className="font-semibold tracking-tight">Sound Trace</p>
-</div>
+        <div className="w-15 h-15 relative">
+          <Image
+            src="/wave-logo.png"
+            alt="SoundTrace logo"
+            fill
+            className="object-contain"
+            sizes="52px"
+            priority
+          />
+        </div>
+        <p className="font-semibold tracking-tight">Sound Trace</p>
+      </div>
       {/* Desktop Nav */}
       <nav className="hidden md:block">
         <ul className="flex gap-8 text-[15px] font-medium text-gray-700">
@@ -42,10 +40,7 @@ const NavBar = () => {
       </nav>
 
       {/* Mobile Toggle */}
-      <button
-        className="md:hidden text-3xl"
-        onClick={() => setOpen(!open)}
-      >
+      <button className="md:hidden text-3xl" onClick={() => setOpen(!open)}>
         {open ? <IoClose /> : <IoMenu />}
       </button>
 

@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import { IoClose } from "react-icons/io5";
 
 type PageProps = {
   title: string;
-  artist:string;
+  artist: string;
+  lyrics: string;
+  onClose: () => void;
 };
 
 type YouTubeVideo = {
@@ -15,62 +17,91 @@ type YouTubeVideo = {
   snippet: {
     title: string;
     channelTitle: string;
-    thumbnails: {
-      medium: {
-        url: string;
-      };
-    };
   };
 };
 
-const Overlay = ({ title, artist }: PageProps) => {
-  const [previewData, setPreviewData] = useState<YouTubeVideo | null>(null);
+const Overlay = ({ title, artist, lyrics, onClose }: PageProps) => {
+  const [data, setData] = useState<YouTubeVideo | null>(null);
+
   useEffect(() => {
-    const googleFetch = async () => {
-      try {
-        const res = await fetch(
-          `/api/youtube?title=${title}&artist=${artist}`,
-        );
-        const jsonData = await res.json();
-        const firstData = jsonData?.youtube?.items?.[0];
-        setPreviewData(firstData);
-      } catch (error) {
-        console.error("Error : ", error);
-      }
+    const fetchVideo = async () => {
+      const res = await fetch(
+        `/api/youtube?title=${title}&artist=${artist}`
+      );
+      const json = await res.json();
+      setData(json?.youtube?.items?.[0]);
     };
-    googleFetch();
-  }, [title,artist]);
-  console.log(previewData);
+
+    fetchVideo();
+  }, [title, artist]);
+
+  // 🧠 ESC key to close (pro UX)
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
+
+  const videoId = data?.id?.videoId;
 
   return (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md">
-    
-    {/* Card */}
-    <div className="bg-white rounded-2xl shadow-xl p-4 w-[320px]">
-      
-      {previewData && (
-        <>
-          <Image
-            src={previewData.snippet.thumbnails.medium.url}
-            alt={previewData.snippet.title}
-            width={320}
-            height={180}
-            className="rounded-lg"
-          />
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-lg px-4"
+    >
 
-          <p className="mt-3 font-semibold text-sm">
-            {previewData.snippet.title}
-          </p>
+      {/* Card */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md rounded-2xl overflow-hidden bg-white shadow-2xl border border-white/20"
+      >
 
-          <p className="text-xs text-gray-500">
-            {previewData.snippet.channelTitle}
-          </p>
-        </>
-      )}
-      
+        {/* ❌ Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition"
+        >
+          <IoClose size={18} />
+        </button>
+
+        {/* YouTube Video */}
+        {videoId && (
+          <div className="relative w-full h-52">
+            <iframe
+              className="w-full h-full"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="p-4 space-y-3">
+
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {title}
+            </h2>
+            <p className="text-sm text-gray-500">{artist}</p>
+          </div>
+
+          <div className="h-px bg-gray-100" />
+
+          <div className="max-h-56 overflow-y-auto pr-2">
+            <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-700">
+              {lyrics}
+            </p>
+          </div>
+
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default Overlay;
