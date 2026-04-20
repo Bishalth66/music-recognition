@@ -52,9 +52,6 @@ const NavBar = () => {
               <Link href="#">Recognize</Link>
             </li>
             <li onClick={() => setOpen(false)}>
-              <Link href="#">History</Link>
-            </li>
-            <li onClick={() => setOpen(false)}>
               <Link href="http://localhost:8000/admin">Admin</Link>
             </li>
           </ul>

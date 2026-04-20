@@ -15,7 +15,7 @@ class FingerprintInline(admin.TabularInline):
     can_delete = False
     show_change_link = False
 
-    # ✅ FIX 2: This must be an actual method on the class, not a loose function
+ 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         song_pk = request.resolver_match.kwargs.get('object_id')

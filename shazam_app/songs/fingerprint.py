@@ -1,30 +1,3 @@
-"""
-Fingerprint engine — Shazam-style audio fingerprinting for Django/DRF.
-
-Key improvements over v1
-────────────────────────
-1.  STFT magnitude (log-scaled) instead of mel-spectrogram.
-    Mel compression warps frequency relationships; STFT preserves the exact
-    bin indices needed for reliable hash discrimination.
-
-2.  Consistent 44 100 Hz sample rate across engine AND views so query clips
-    and stored tracks are processed identically.  (v1 used 22 050 Hz in the
-    engine but 44 100 Hz in the WAV conversion — a silent mismatch.)
-
-3.  Stronger hashes encode (f1, f2, dt, f1_magnitude_band) giving 4 degrees
-    of freedom instead of 3, cutting false-positive collisions significantly.
-
-4.  Amplitude-ranked peak selection: instead of keeping every local maximum,
-    we keep only the top-N loudest peaks per time frame so the constellation
-    map stays dense in musically rich regions and sparse in noise.
-
-5.  Configurable noise floor relative to per-clip maximum (not a fixed dB
-    value) so quiet recordings don't lose all their peaks.
-
-6.  Fan-out walks forward AND backward from each anchor peak, doubling hash
-    coverage with no extra storage cost.
-"""
-
 from __future__ import annotations
 
 import hashlib

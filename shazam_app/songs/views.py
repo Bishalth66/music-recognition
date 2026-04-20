@@ -1,16 +1,3 @@
-"""
-RecognizeView — POST /api/recognize/
-
-Improvements over v1
-─────────────────────
-1.  Multi-offset map: hash → [t0, t1, …] so repeated hashes all vote.
-2.  Noise pipeline: VAD trim → spectral gate → peak normalisation.
-3.  Composite confidence score (peak ratio + hash coverage + vote density).
-4.  Input validation: rejects clips that are too short, too silent, or
-    produce too few fingerprints before touching the database.
-5.  Sample rate unified at 44 100 Hz (matches fingerprint.py).
-"""
-
 from __future__ import annotations
 
 import io
@@ -69,13 +56,6 @@ def convert_to_wav(audio_bytes: bytes) -> bytes:
 
 
 def spectral_gate(y: np.ndarray, sr: int) -> np.ndarray:
-    """
-    Suppress stationary background noise (hiss, HVAC, crowd).
-
-    Estimates the noise floor from the quietest SPECTRAL_GATE_PERCENTILE %
-    of STFT frames, then subtracts SPECTRAL_GATE_FACTOR × that floor from
-    every bin.  Bins that fall below zero are zeroed out.
-    """
     n_fft = 2048
     hop   = n_fft // 4
     stft  = librosa.stft(y, n_fft=n_fft, hop_length=hop)
