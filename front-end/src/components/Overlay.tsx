@@ -78,7 +78,7 @@ const Overlay = ({ title, artist, lyrics, onClose }: PageProps) => {
 
         {/* 🎬 Video Section */}
         {loading ? (
-          <div className="w-full h-52 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+          <div className="w-full h-52 bg-linear-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
         ) : videoId ? (
           <div className="relative w-full h-52">
             <iframe

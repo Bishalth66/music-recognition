@@ -13,18 +13,18 @@ from scipy.ndimage import generate_binary_structure, iterate_structure, maximum_
 SAMPLE_RATE = 44_100          # MUST match views.py / WAV conversion
 
 # STFT settings
-N_FFT      = 4096             # frequency resolution (~10 Hz bins at 44 100 Hz)
+N_FFT      = 2048             # frequency resolution (~10 Hz bins at 44 100 Hz)
 HOP_LENGTH = 512              # ~11.6 ms time resolution
 WIN_LENGTH = N_FFT
 
 # Peak detection
 PEAK_NEIGHBORHOOD    = 10     # local-max filter radius (frames × bins)
-PEAKS_PER_FRAME      = 5      # keep only the N loudest peaks per time frame
+PEAKS_PER_FRAME      = 3     # keep only the N loudest peaks per time frame
 MIN_AMPLITUDE_RATIO  = 0.15   # peaks must be ≥ this fraction of clip's max dB
                                # (relative threshold → works for quiet clips too)
 
 # Constellation / hashing
-FAN_VALUE      = 10           # neighbours paired with each anchor peak
+FAN_VALUE      = 5         # neighbours paired with each anchor peak
 MIN_TIME_DELTA = 1            # frames  (~12 ms)
 MAX_TIME_DELTA = 250          # frames  (~2.9 s)
 

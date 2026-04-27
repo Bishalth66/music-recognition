@@ -11,7 +11,7 @@ const NavBar = () => {
   return (
     <header className="w-full h-16 flex items-center justify-between px-4 md:px-6 bg-white border-b border-gray-200 relative">
       {/* Logo */}
-      <div className="flex gap-1 items-center">
+      <Link href="/" className="flex gap-1 items-center">
         <div className="w-15 h-15 relative">
           <Image
             src="/wave-logo.png"
@@ -23,7 +23,7 @@ const NavBar = () => {
           />
         </div>
         <p className="font-semibold tracking-tight">Sound Trace</p>
-      </div>
+      </Link>
       {/* Desktop Nav */}
       <nav className="hidden md:block">
         <ul className="flex gap-8 text-[15px] font-medium text-gray-700">
@@ -31,10 +31,7 @@ const NavBar = () => {
             Recognize
           </li>
           <li className="hover:text-black transition cursor-pointer">
-            History
-          </li>
-          <li className="hover:text-black transition cursor-pointer">
-            <Link href="http://localhost:8000/admin">Admin</Link>
+            <Link  href="http://localhost:8000/admin">Admin</Link>
           </li>
         </ul>
       </nav>

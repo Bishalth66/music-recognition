@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FiUpload, FiX } from "react-icons/fi";
+import Overlay from "./Overlay";
 type resultServer = {
     confidence:number,
     song:{
@@ -8,13 +9,13 @@ type resultServer = {
       title:string,
       artist:string,
       album:string,
+      lyrics:string,
       duration_seconds:number
     }
 }
 
-
-
 const UploadUi = () => {
+  const [openOverlay, setOpenOverlay] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ const UploadUi = () => {
 
       const data = await res.json();
       setResult(data);
-      console.log("Result:", data);
+        setOpenOverlay(true);
     } catch (err) {
       console.error(err);
     } finally {
@@ -59,7 +60,6 @@ const UploadUi = () => {
     }
   };
 
-  // ❌ remove file
   const removeFile = () => {
     setFile(null);
     setPreviewUrl(null);
@@ -122,6 +122,9 @@ const UploadUi = () => {
               {result?.song.title || "Song not detected!"}
             </div>
           )}
+          {openOverlay && result?.song?.title &&  (
+          <Overlay title={result?.song?.title} artist={result?.song.artist} lyrics={result?.song?.lyrics} onClose={() => setOpenOverlay(false)}/>
+        )}
         </div>
       )}
     </div>

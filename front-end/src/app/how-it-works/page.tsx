@@ -1,7 +1,3 @@
-
-
-import React from "react";
-
 const steps = [
   {
     title: "Search Your Song",
@@ -42,11 +38,9 @@ const HowItWorks = () => {
             className="group rounded-2xl p-6 backdrop-blur-lg border border-gray-300 shadow-md transition"
           >
             <div className="text-4xl mb-4">{step.icon}</div>
-
             <h3 className="text-xl font-semibold mb-2">
               {step.title}
             </h3>
-
             <p className="text-gray-400 leading-relaxed">
               {step.desc}
             </p>

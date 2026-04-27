@@ -30,6 +30,12 @@ class FingerprintInline(admin.TabularInline):
 
 @admin.register(Song)
 class SongAdmin(admin.ModelAdmin):
+    def delete_model(self, request, obj):
+        obj.delete()
+    def delete_queryset(self, request, queryset):
+        queryset.delete()
+    def get_deleted_objects(self, objs, request):
+         return ([], {}, set(), [])
     list_display = (
         'title', 'artist', 'album', 'duration_display',
         'fingerprint_count', 'fingerprinted', 'created_at',
@@ -37,11 +43,9 @@ class SongAdmin(admin.ModelAdmin):
     list_filter = ('fingerprinted', 'artist')
     search_fields = ('title', 'artist', 'album')
     readonly_fields = (
-        'title',
         'fingerprinted',
         'duration_seconds',
         'created_at',
-        'audio_file',
         'fingerprint_count',
         'audio_player',
     )
