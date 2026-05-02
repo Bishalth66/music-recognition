@@ -89,12 +89,7 @@ The frontend will be running at `http://localhost:3000`.
 1. Open the app in your browser.
 2. Upload an audio file or record a short clip.
 3. The app will analyze the audio and return the matching song details.
-
----
-
-## 📄 License
-
-This project is open source. See [LICENSE](LICENSE) for details.
+   
 
 ---
 
