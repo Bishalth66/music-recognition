@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FiUpload, FiX } from "react-icons/fi";
 import Overlay from "./Overlay";
+import { saveRecognitionToHistory } from "@/lib/history";
 type resultServer = {
     confidence:number,
     song:{
@@ -52,7 +53,8 @@ const UploadUi = () => {
 
       const data = await res.json();
       setResult(data);
-        setOpenOverlay(true);
+      saveRecognitionToHistory(data, "upload");
+      setOpenOverlay(true);
     } catch (err) {
       console.error(err);
     } finally {

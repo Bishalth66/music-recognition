@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { IoMicOutline } from "react-icons/io5";
 import Overlay from "./Overlay";
+import { saveRecognitionToHistory } from "@/lib/history";
 type resultServer = {
   confidence: number;
   song: {
@@ -97,6 +98,7 @@ const RecordUi = () => {
 
       const data = await res.json();
       setData(data);
+      saveRecognitionToHistory(data, "record");
       setOpenOverlay(true);
       
     } catch (err) {

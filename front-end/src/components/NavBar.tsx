@@ -28,7 +28,10 @@ const NavBar = () => {
       <nav className="hidden md:block">
         <ul className="flex gap-8 text-[15px] font-medium text-gray-700">
           <li className="hover:text-black transition cursor-pointer">
-            Recognize
+            <Link href="/">Recognize</Link>
+          </li>
+          <li className="hover:text-black transition cursor-pointer">
+            <Link href="/history">History</Link>
           </li>
           <li className="hover:text-black transition cursor-pointer">
             <Link  href="http://localhost:8000/admin">Admin</Link>
@@ -46,7 +49,10 @@ const NavBar = () => {
         <div className="absolute top-16 left-0 w-full bg-white border-b border-gray-200 md:hidden">
           <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
             <li onClick={() => setOpen(false)}>
-              <Link href="#">Recognize</Link>
+              <Link href="/">Recognize</Link>
+            </li>
+            <li onClick={() => setOpen(false)}>
+              <Link href="/history">History</Link>
             </li>
             <li onClick={() => setOpen(false)}>
               <Link href="http://localhost:8000/admin">Admin</Link>

@@ -42,16 +42,6 @@ def _load_audio(path: str) -> np.ndarray:
 
 
 def _spectrogram(y: np.ndarray) -> np.ndarray:
-    """
-    Return a log-magnitude STFT spectrogram (dB, shape: freq × time).
-
-    We use the raw STFT magnitude rather than a mel filterbank because:
-    • Mel compression changes the apparent frequency spacing of peaks,
-      making the (f1, f2) pair in a hash encode different perceptual distances
-      depending on the region of the spectrum.
-    • STFT bins are linearly spaced, so two clips of the same audio always
-      produce peaks at the same bin indices regardless of loudness or device.
-    """
     S = np.abs(
         librosa.stft(y, n_fft=N_FFT, hop_length=HOP_LENGTH, win_length=WIN_LENGTH)
     )
@@ -112,20 +102,7 @@ def _freq_band(freq_bin: int) -> int:
 
 
 def _hash_peaks(peaks: List[Tuple[int, int]]) -> List[Tuple[str, int]]:
-    """
-    Build the constellation fingerprint from a list of (time, freq) peaks.
-
-    For every anchor peak (t1, f1) we fan out to the next FAN_VALUE peaks
-    and create a hash encoding:
-        (f1, f2, time_delta, freq_band_of_f1)
-
-    The extra freq_band dimension over the original (f1, f2, dt) triples
-    significantly reduces hash collisions in spectrally similar passages
-    (e.g. silence, sustained chords).
-
-    We also fan BACKWARD from each anchor (swapping anchor/target) to
-    double hash density at no extra storage cost.
-    """
+    
     hashes: List[Tuple[str, int]] = []
 
     for i, (t1, f1) in enumerate(peaks):

@@ -19,9 +19,7 @@ class Fingerprint(models.Model):
     song        = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='fingerprints')
     hash_value  = models.CharField(max_length=40, db_index=True)
     offset      = models.IntegerField()  # time frame index in the spectrogram
-
     class Meta:
         indexes = [models.Index(fields=['hash_value'])]
-
     def __str__(self):
         return f"{self.hash_value} @ {self.offset}"
