@@ -63,14 +63,14 @@ const NavBar = () => {
               href="/auth"
               aria-label={accountLabel}
               title={accountLabel}
-              className={`flex  items-center justify-center rounded-full ${user ? "border-0 h-9 w-9" : "border"}  border-gray-200 bg-white text-gray-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700`}
+              className={`flex flex-1  items-center justify-center rounded-full ${user ? "border hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 h-9 w-9" : "border-0 "}  border-gray-200 bg-white text-gray-700 transition `}
             >
               {user ? (
                 <span className="text-sm font-semibold">
                   {getProfileInitial(user)}
                 </span>
               ) : (
-                <span>SignIn </span>
+                <span>Sign in </span>
               )}
             </Link>
           </li>
