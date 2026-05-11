@@ -47,14 +47,13 @@ const NavBar = () => {
       <nav className="hidden md:block">
         <ul className="flex items-center gap-8 text-[15px] font-medium text-gray-700">
           <li className="hover:text-black transition cursor-pointer">
-            <Link href="/">Recognize</Link>
+            <Link href="/recognize">Recognize</Link>
           </li>
           <li className="hover:text-black transition cursor-pointer">
             <Link href="/history">History</Link>
           </li>
-          <li className="hover:text-black transition cursor-pointer">
-            <Link href="/discover">Discover</Link>
-          </li>
+          
+          
           <li className="hover:text-black transition cursor-pointer">
             <Link href="/library">Library</Link>
           </li>
@@ -63,14 +62,14 @@ const NavBar = () => {
               href="/auth"
               aria-label={accountLabel}
               title={accountLabel}
-              className={`flex flex-1  items-center justify-center rounded-full ${user ? "border hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 h-9 w-9" : "border-0 "}  border-gray-200 bg-white text-gray-700 transition `}
+              className={`${user ? "border h-9 w-9  border-gray-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700" : "border-0" } flex items-center justify-center rounded-full  bg-white text-gray-700 transition `}
             >
               {user ? (
                 <span className="text-sm font-semibold">
                   {getProfileInitial(user)}
                 </span>
               ) : (
-                <span>Sign in </span>
+                <span>Sign in</span>
               )}
             </Link>
           </li>
@@ -87,14 +86,12 @@ const NavBar = () => {
         <div className="absolute top-16 left-0 w-full bg-white border-b border-gray-200 md:hidden">
           <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
             <li onClick={() => setOpen(false)}>
-              <Link href="/">Recognize</Link>
+              <Link href="/recognize">Recognize</Link>
             </li>
             <li onClick={() => setOpen(false)}>
               <Link href="/history">History</Link>
             </li>
-            <li onClick={() => setOpen(false)}>
-              <Link href="/discover">Discover</Link>
-            </li>
+           
             <li onClick={() => setOpen(false)}>
               <Link href="/library">Library</Link>
             </li>

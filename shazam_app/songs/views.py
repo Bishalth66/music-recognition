@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import mimetypes
 import subprocess
 from collections import defaultdict
 
@@ -9,6 +10,7 @@ import numpy as np
 import soundfile as sf
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.http import FileResponse, Http404
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
@@ -361,6 +363,27 @@ def serialize_interaction(interaction: UserSongInteraction) -> dict:
     }
 
 
+def serialize_song(song: Song, request) -> dict:
+    stream_url = request.build_absolute_uri(f"/api/songs/{song.pk}/stream/")
+    audio_url = (
+        request.build_absolute_uri(song.audio_file.url)
+        if song.audio_file
+        else ""
+    )
+    return {
+        "id": song.pk,
+        "title": song.title,
+        "artist": song.artist,
+        "album": song.album,
+        "lyrics": song.lyrics,
+        "durationSeconds": song.duration_seconds,
+        "fingerprinted": song.fingerprinted,
+        "createdAt": song.created_at.isoformat(),
+        "audioUrl": audio_url,
+        "streamUrl": stream_url,
+    }
+
+
 def auth_response(user: User) -> Response:
     token, _ = Token.objects.get_or_create(user=user)
     return Response({"token": token.key, "user": serialize_user(user)})
@@ -428,6 +451,37 @@ class LogoutView(APIView):
     def post(self, request) -> Response:
         Token.objects.filter(user=request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SongListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request) -> Response:
+        songs = Song.objects.order_by("-created_at")
+        return Response({"songs": [serialize_song(song, request) for song in songs]})
+
+
+class SongStreamView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, song_id: int) -> FileResponse:
+        try:
+            song = Song.objects.get(pk=song_id)
+        except Song.DoesNotExist as exc:
+            raise Http404("Song not found.") from exc
+
+        if not song.audio_file:
+            raise Http404("Audio file not found.")
+
+        content_type, _ = mimetypes.guess_type(song.audio_file.name)
+        response = FileResponse(
+            song.audio_file.open("rb"),
+            content_type=content_type or "audio/mpeg",
+        )
+        response["Content-Disposition"] = (
+            f'inline; filename="{song.audio_file.name.rsplit("/", 1)[-1]}"'
+        )
+        return response
 
 
 class InteractionListView(APIView):

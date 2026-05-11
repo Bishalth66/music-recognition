@@ -7,10 +7,14 @@ from .views import (
     MeView,
     RecognizeView,
     RegisterView,
+    SongListView,
+    SongStreamView,
 )
 
 urlpatterns = [
     path('recognize/', RecognizeView.as_view(), name='recognize'),
+    path('songs/', SongListView.as_view(), name='songs'),
+    path('songs/<int:song_id>/stream/', SongStreamView.as_view(), name='song-stream'),
     path('auth/register/', RegisterView.as_view(), name='auth-register'),
     path('auth/login/', LoginView.as_view(), name='auth-login'),
     path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
