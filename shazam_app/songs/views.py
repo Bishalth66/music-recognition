@@ -7,13 +7,17 @@ from collections import defaultdict
 import librosa
 import numpy as np
 import soundfile as sf
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from songs.fingerprint import fingerprint_bytes_data
-from songs.models import Fingerprint, Song
+from songs.models import Fingerprint, Song, UserSongInteraction
 
 # ── Tuning constants ──────────────────────────────────────────────────────────
 
@@ -330,3 +334,165 @@ class RecognizeView(APIView):
                 "total_hashes":   len(query_hashes),
             }
         )
+
+
+def serialize_user(user: User) -> dict:
+    return {
+        "id": user.pk,
+        "username": user.username,
+        "email": user.email,
+    }
+
+
+def serialize_interaction(interaction: UserSongInteraction) -> dict:
+    song = interaction.song
+    return {
+        "songId": song.pk,
+        "title": song.title,
+        "artist": song.artist,
+        "album": song.album,
+        "lyrics": song.lyrics,
+        "durationSeconds": song.duration_seconds,
+        "favorite": interaction.favorite,
+        "rating": interaction.rating,
+        "note": interaction.note,
+        "playlist": interaction.playlist,
+        "updatedAt": interaction.updated_at.isoformat(),
+    }
+
+
+def auth_response(user: User) -> Response:
+    token, _ = Token.objects.get_or_create(user=user)
+    return Response({"token": token.key, "user": serialize_user(user)})
+
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request) -> Response:
+        username = (request.data.get("username") or "").strip()
+        email = (request.data.get("email") or "").strip()
+        password = request.data.get("password") or ""
+
+        if not username or not password:
+            return Response(
+                {"error": "Username and password are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(password) < 8:
+            return Response(
+                {"error": "Password must be at least 8 characters."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if User.objects.filter(username__iexact=username).exists():
+            return Response(
+                {"error": "That username is already taken."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+        )
+        return auth_response(user)
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request) -> Response:
+        username = (request.data.get("username") or "").strip()
+        password = request.data.get("password") or ""
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            return Response(
+                {"error": "Invalid username or password."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return auth_response(user)
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request) -> Response:
+        return Response({"user": serialize_user(request.user)})
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request) -> Response:
+        Token.objects.filter(user=request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class InteractionListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request) -> Response:
+        interactions = (
+            UserSongInteraction.objects
+            .filter(user=request.user)
+            .select_related("song")
+        )
+        return Response(
+            {"interactions": [serialize_interaction(item) for item in interactions]}
+        )
+
+    def post(self, request) -> Response:
+        song_id = request.data.get("songId")
+        if not song_id:
+            return Response(
+                {"error": "songId is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            song = Song.objects.get(pk=song_id)
+        except Song.DoesNotExist:
+            return Response(
+                {"error": "Song not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        rating = request.data.get("rating")
+        try:
+            rating = int(rating) if rating not in (None, "") else 0
+        except (TypeError, ValueError):
+            return Response(
+                {"error": "Rating must be a number from 0 to 5."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if rating < 0 or rating > 5:
+            return Response(
+                {"error": "Rating must be between 0 and 5."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        interaction, _ = UserSongInteraction.objects.update_or_create(
+            user=request.user,
+            song=song,
+            defaults={
+                "favorite": bool(request.data.get("favorite", False)),
+                "rating": rating,
+                "note": request.data.get("note", ""),
+                "playlist": request.data.get("playlist", ""),
+            },
+        )
+
+        return Response(serialize_interaction(interaction))
+
+
+class InteractionDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, song_id: int) -> Response:
+        UserSongInteraction.objects.filter(
+            user=request.user,
+            song_id=song_id,
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

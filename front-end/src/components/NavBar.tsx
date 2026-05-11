@@ -2,11 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMenu, IoClose } from "react-icons/io5";
+import { getCurrentUser, type AuthUser } from "@/lib/history";
 
 const NavBar = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    const loadUser = () => {
+      getCurrentUser().then(setUser);
+    };
+
+    loadUser();
+    window.addEventListener("auth-updated", loadUser);
+    return () => window.removeEventListener("auth-updated", loadUser);
+  }, []);
 
   return (
     <header className="w-full h-16 flex items-center justify-between px-4 md:px-6 bg-white border-b border-gray-200 relative">
@@ -34,7 +46,13 @@ const NavBar = () => {
             <Link href="/history">History</Link>
           </li>
           <li className="hover:text-black transition cursor-pointer">
-            <Link  href="http://localhost:8000/admin">Admin</Link>
+            <Link href="/discover">Discover</Link>
+          </li>
+          <li className="hover:text-black transition cursor-pointer">
+            <Link href="/library">Library</Link>
+          </li>
+          <li className="hover:text-black transition cursor-pointer">
+            <Link href="/auth">{user ? user.username : "Sign in"}</Link>
           </li>
         </ul>
       </nav>
@@ -55,7 +73,13 @@ const NavBar = () => {
               <Link href="/history">History</Link>
             </li>
             <li onClick={() => setOpen(false)}>
-              <Link href="http://localhost:8000/admin">Admin</Link>
+              <Link href="/discover">Discover</Link>
+            </li>
+            <li onClick={() => setOpen(false)}>
+              <Link href="/library">Library</Link>
+            </li>
+            <li onClick={() => setOpen(false)}>
+              <Link href="/auth">{user ? user.username : "Sign in"}</Link>
             </li>
           </ul>
         </div>

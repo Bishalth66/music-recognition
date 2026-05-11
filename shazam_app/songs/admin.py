@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db.models import Count
-from .models import Song, Fingerprint
+from .models import Fingerprint, Song, UserSongInteraction
 
 admin.site.site_url = "http://localhost:3000/"
 
@@ -116,4 +116,10 @@ class FingerprintAdmin(admin.ModelAdmin):
     raw_id_fields = ('song',)
     readonly_fields = ('hash_value', 'offset', 'song')
 
-   
+
+@admin.register(UserSongInteraction)
+class UserSongInteractionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'song', 'favorite', 'rating', 'playlist', 'updated_at')
+    list_filter = ('favorite', 'rating', 'playlist')
+    search_fields = ('user__username', 'song__title', 'song__artist', 'note')
+    raw_id_fields = ('user', 'song')

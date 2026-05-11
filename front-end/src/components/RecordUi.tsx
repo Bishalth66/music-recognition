@@ -137,7 +137,16 @@ const RecordUi = () => {
               : "Tap to identify music"}
         </p>
         {openOverlay && data?.song?.title &&  (
-          <Overlay title={data?.song?.title} artist={data?.song.artist} lyrics={data?.song?.lyrics} onClose={() => setOpenOverlay(false)}/>
+          <Overlay
+            songId={data.song.id}
+            title={data.song.title}
+            artist={data.song.artist}
+            album={data.song.album}
+            lyrics={data.song.lyrics}
+            durationSeconds={data.song.duration_seconds}
+            confidence={data.confidence}
+            onClose={() => setOpenOverlay(false)}
+          />
         )}
       </div>
     </div>

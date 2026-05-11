@@ -114,8 +114,12 @@ const HistoryView = () => {
 
       {selectedItem && (
         <Overlay
+          songId={selectedItem.songId}
           title={selectedItem.title}
           artist={selectedItem.artist}
+          album={selectedItem.album}
+          durationSeconds={selectedItem.durationSeconds}
+          confidence={selectedItem.confidence}
           lyrics={selectedItem.lyrics || "No lyrics saved for this track."}
           onClose={() => setSelectedItem(null)}
         />

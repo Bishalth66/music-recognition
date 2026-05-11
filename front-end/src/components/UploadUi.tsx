@@ -125,7 +125,16 @@ const UploadUi = () => {
             </div>
           )}
           {openOverlay && result?.song?.title &&  (
-          <Overlay title={result?.song?.title} artist={result?.song.artist} lyrics={result?.song?.lyrics} onClose={() => setOpenOverlay(false)}/>
+          <Overlay
+            songId={result.song.id}
+            title={result.song.title}
+            artist={result.song.artist}
+            album={result.song.album}
+            lyrics={result.song.lyrics}
+            durationSeconds={result.song.duration_seconds}
+            confidence={result.confidence}
+            onClose={() => setOpenOverlay(false)}
+          />
         )}
         </div>
       )}
